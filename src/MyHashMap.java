@@ -2,7 +2,7 @@ class MyHashMap<K, V> {
 
     private Entry<K, V>[] table;
     private int capacity = 4;
-    private int size = 0; // Додано поле size для відстеження кількості елементів
+    private int size = 0;
 
     static class Entry<K, V> {
         K key;
@@ -53,7 +53,7 @@ class MyHashMap<K, V> {
             }
             previous.next = newEntry;
         }
-        size++; // Збільшення лічильника елементів
+        size++;
     }
 
     public V get(K key) {
@@ -65,9 +65,9 @@ class MyHashMap<K, V> {
             while (temp != null) {
                 if (temp.key.equals(key))
                     return temp.value;
-                temp = temp.next; // return value corresponding to key.
+                temp = temp.next;
             }
-            return null; // returns null if key is not found.
+            return null;
         }
     }
 
@@ -81,15 +81,15 @@ class MyHashMap<K, V> {
             Entry<K, V> previous = null;
             Entry<K, V> current = table[hash];
 
-            while (current != null) { // we have reached last entry node of bucket.
+            while (current != null) {
                 if (current.key.equals(deleteKey)) {
-                    if (previous == null) { // delete first entry node.
+                    if (previous == null) {
                         table[hash] = table[hash].next;
-                        size--; // Зменшення лічильника елементів
+                        size--;
                         return true;
                     } else {
                         previous.next = current.next;
-                        size--; // Зменшення лічильника елементів
+                        size--;
                         return true;
                     }
                 }
@@ -101,26 +101,12 @@ class MyHashMap<K, V> {
 
     }
 
-    public void display() {
-
-        for (int i = 0; i < capacity; i++) {
-            if (table[i] != null) {
-                Entry<K, V> entry = table[i];
-                while (entry != null) {
-                    System.out.print("{" + entry.key + "=" + entry.value + "}" + " ");
-                    entry = entry.next;
-                }
-            }
-        }
-
-    }
-
     private int hash(K key) {
         return Math.abs(key.hashCode()) % capacity;
     }
 
     private void ensureCapacity() {
-        if (size >= capacity * 0.75) { // Використовуємо size замість size()
+        if (size >= capacity * 0.75) {
             resize();
         }
     }
