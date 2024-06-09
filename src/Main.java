@@ -71,7 +71,7 @@ public class Main {
         System.out.println();
 
 
-        MyHashMap map = new MyHashMap();
+        MyHashMap<String, String> map = new MyHashMap<>();
 
         map.put("key1", "value1");
         map.put("key2", "value2");
@@ -87,7 +87,7 @@ public class Main {
         System.out.println("Value for 'key2' after removal: " + map.get("key2"));
         System.out.println("Size after removal: " + map.size());
 
-        map.clear();
-        System.out.println("Size after clearing: " + map.size());
+        list.clear();
+        System.out.println("Size after clearing: " + list.size());
     }
 }

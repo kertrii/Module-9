@@ -1,90 +1,150 @@
-public class MyHashMap {
-    private Node[] table;
-    private int size;
-    private static final int DEFAULT_CAPACITY = 16;
+class MyHashMap<K, V> {
 
-    private class Node {
-        Object key;
-        Object value;
-        Node next;
+    private Entry<K, V>[] table;
+    private int capacity = 4;
+    private int size = 0; // Додано поле size для відстеження кількості елементів
 
-        Node(Object key, Object value) {
+    static class Entry<K, V> {
+        K key;
+        V value;
+        Entry<K, V> next;
+
+        public Entry(K key, V value, Entry<K, V> next) {
             this.key = key;
             this.value = value;
+            this.next = next;
         }
     }
 
+    @SuppressWarnings("unchecked")
     public MyHashMap() {
-        table = new Node[DEFAULT_CAPACITY];
-        size = 0;
+        table = new Entry[capacity];
     }
 
-    private int hash(Object key) {
-        return key == null ? 0 : Math.abs(key.hashCode() % table.length);
-    }
+    public void put(K newKey, V data) {
+        if (newKey == null)
+            return;
 
-    public void put(Object key, Object value) {
-        int index = hash(key);
-        Node newNode = new Node(key, value);
-        Node current = table[index];
+        ensureCapacity();
 
-        if (current == null) {
-            table[index] = newNode;
-            size++;
+        int hash = hash(newKey);
+        Entry<K, V> newEntry = new Entry<K, V>(newKey, data, null);
+
+        if (table[hash] == null) {
+            table[hash] = newEntry;
         } else {
-            Node prev = null;
+            Entry<K, V> previous = null;
+            Entry<K, V> current = table[hash];
+
             while (current != null) {
-                if (current.key.equals(key)) {
-                    current.value = value;
-                    return;
+                if (current.key.equals(newKey)) {
+                    if (previous == null) {
+                        newEntry.next = current.next;
+                        table[hash] = newEntry;
+                        return;
+                    } else {
+                        newEntry.next = current.next;
+                        previous.next = newEntry;
+                        return;
+                    }
                 }
-                prev = current;
+                previous = current;
                 current = current.next;
             }
-            prev.next = newNode;
-            size++;
+            previous.next = newEntry;
         }
+        size++; // Збільшення лічильника елементів
     }
 
-    public void remove(Object key) {
-        int index = hash(key);
-        Node current = table[index];
-        Node prev = null;
-
-        while (current != null) {
-            if (current.key.equals(key)) {
-                if (prev == null) {
-                    table[index] = current.next;
-                } else {
-                    prev.next = current.next;
-                }
-                size--;
-                return;
+    public V get(K key) {
+        int hash = hash(key);
+        if (table[hash] == null) {
+            return null;
+        } else {
+            Entry<K, V> temp = table[hash];
+            while (temp != null) {
+                if (temp.key.equals(key))
+                    return temp.value;
+                temp = temp.next; // return value corresponding to key.
             }
-            prev = current;
-            current = current.next;
+            return null; // returns null if key is not found.
         }
     }
 
-    public void clear() {
-        table = new Node[DEFAULT_CAPACITY];
-        size = 0;
+    public boolean remove(K deleteKey) {
+
+        int hash = hash(deleteKey);
+
+        if (table[hash] == null) {
+            return false;
+        } else {
+            Entry<K, V> previous = null;
+            Entry<K, V> current = table[hash];
+
+            while (current != null) { // we have reached last entry node of bucket.
+                if (current.key.equals(deleteKey)) {
+                    if (previous == null) { // delete first entry node.
+                        table[hash] = table[hash].next;
+                        size--; // Зменшення лічильника елементів
+                        return true;
+                    } else {
+                        previous.next = current.next;
+                        size--; // Зменшення лічильника елементів
+                        return true;
+                    }
+                }
+                previous = current;
+                current = current.next;
+            }
+            return false;
+        }
+
+    }
+
+    public void display() {
+
+        for (int i = 0; i < capacity; i++) {
+            if (table[i] != null) {
+                Entry<K, V> entry = table[i];
+                while (entry != null) {
+                    System.out.print("{" + entry.key + "=" + entry.value + "}" + " ");
+                    entry = entry.next;
+                }
+            }
+        }
+
+    }
+
+    private int hash(K key) {
+        return Math.abs(key.hashCode()) % capacity;
+    }
+
+    private void ensureCapacity() {
+        if (size >= capacity * 0.75) { // Використовуємо size замість size()
+            resize();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        int newCapacity = capacity * 2;
+        Entry<K, V>[] newTable = new Entry[newCapacity];
+
+        for (Entry<K, V> entry : table) {
+            while (entry != null) {
+                Entry<K, V> next = entry.next;
+                int hash = hash(entry.key);
+                entry.next = newTable[hash];
+                newTable[hash] = entry;
+                entry = next;
+            }
+        }
+
+        table = newTable;
+        capacity = newCapacity;
     }
 
     public int size() {
         return size;
-    }
-
-    public Object get(Object key) {
-        int index = hash(key);
-        Node current = table[index];
-
-        while (current != null) {
-            if (current.key.equals(key)) {
-                return current.value;
-            }
-            current = current.next;
-        }
-        return null;
     }
 }
