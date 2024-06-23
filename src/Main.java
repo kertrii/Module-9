@@ -71,21 +71,12 @@ public class Main {
         System.out.println();
 
 
-        MyHashMap<String, String> map = new MyHashMap<>();
+        MyHashMap<String, Integer> mhm = new MyHashMap<>();
+        mhm.put(null, 666);
 
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        map.put("key3", "value3");
-
-        System.out.println("Size of HashMap: " + map.size());
-
-        System.out.println("Value for 'key1': " + map.get("key1"));
-        System.out.println("Value for 'key2': " + map.get("key2"));
-        System.out.println("Value for 'key3': " + map.get("key3"));
-
-        map.remove("key2");
-        System.out.println("Value for 'key2' after removal: " + map.get("key2"));
-        System.out.println("Size after removal: " + map.size());
+        System.out.println(mhm.get(null));
+        System.out.println(mhm.size());
+        mhm.remove(null);
 
         list.clear();
         System.out.println("Size after clearing: " + list.size());

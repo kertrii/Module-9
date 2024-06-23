@@ -3,6 +3,7 @@ class MyHashMap<K, V> {
     private Entry<K, V>[] table;
     private int capacity = 4;
     private int size = 0;
+    private Entry<K, V> nullKeyEntry = null;
 
     static class Entry<K, V> {
         K key;
@@ -22,8 +23,19 @@ class MyHashMap<K, V> {
     }
 
     public void put(K newKey, V data) {
-        if (newKey == null)
+//        if (newKey == null)
+//            return;
+
+
+        if (newKey == null) {
+            if (nullKeyEntry == null) {
+                nullKeyEntry = new Entry<>(null, data, null);
+                size++;
+            } else {
+                nullKeyEntry.value = data;
+            }
             return;
+        }
 
         ensureCapacity();
 
@@ -57,18 +69,20 @@ class MyHashMap<K, V> {
     }
 
     public V get(K key) {
-        int hash = hash(key);
-        if (table[hash] == null) {
-            return null;
-        } else {
-            Entry<K, V> temp = table[hash];
-            while (temp != null) {
-                if (temp.key.equals(key))
-                    return temp.value;
-                temp = temp.next;
-            }
-            return null;
+        if (key == null) {
+            return nullKeyEntry == null ? null : nullKeyEntry.value;
         }
+
+        int hash = hash(key);
+        Entry<K, V> current = table[hash];
+
+        while (current != null) {
+            if (current.key.equals(key)) {
+                return current.value;
+            }
+            current = current.next;
+        }
+        return null;
     }
 
     public boolean remove(K deleteKey) {
@@ -102,7 +116,12 @@ class MyHashMap<K, V> {
     }
 
     private int hash(K key) {
-        return Math.abs(key.hashCode()) % capacity;
+        if (key == null) {
+            return 0;
+        } else {
+            return Math.abs(key.hashCode()) % capacity;
+        }
+//        return Math.abs(key.hashCode()) % capacity;
     }
 
     private void ensureCapacity() {

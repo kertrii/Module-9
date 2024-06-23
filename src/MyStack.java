@@ -1,9 +1,9 @@
 public class MyStack<T> {
-    private Object[] array;
+    private T[] array;
     private int size;
 
     public MyStack() {
-        array = new Object[10];
+        array = (T[]) new Object[10];
         size = 0;
     }
 
@@ -19,14 +19,14 @@ public class MyStack<T> {
         if (size == 0) {
             throw new RuntimeException("Stack is empty");
         }
-        return (T) array[size - 1];
+        return array[size - 1];
     }
 
     public T pop() {
         if (size == 0) {
             throw new RuntimeException("Stack is empty");
         }
-        T element = (T) array[size - 1];
+        T element = array[size - 1];
         array[size - 1] = null;
         size--;
         return element;
@@ -44,8 +44,8 @@ public class MyStack<T> {
     }
 
     private void resizeArray() {
-        Object[] newArray = new Object[array.length * 2];
+        Object[] newArray = (T[]) new Object[array.length * 2];
         System.arraycopy(array, 0, newArray, 0, size);
-        array = newArray;
+        array = (T[]) newArray;
     }
 }
