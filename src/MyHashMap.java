@@ -68,6 +68,21 @@ class MyHashMap<K, V> {
         size++;
     }
 
+//    public V get(K key) {
+//        int hash = hash(key);
+//        if (table[hash] == null) {
+//            return null;
+//        } else {
+//            Entry<K, V> temp = table[hash];
+//            while (temp != null) {
+//                if (temp.key.equals(key))
+//                    return temp.value;
+//                temp = temp.next;
+//            }
+//            return null;
+//        }
+//    }
+
     public V get(K key) {
         if (key == null) {
             return nullKeyEntry == null ? null : nullKeyEntry.value;
